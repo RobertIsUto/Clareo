@@ -80,7 +80,7 @@ body {
   width: 100%;
   max-width: none;
   margin: 0;
-  padding: var(--spacing-md) 0;
+  padding: var(--spacing-md) var(--spacing-lg);
   padding-bottom: var(--spacing-xl);
   display: flex;
   flex-direction: column;
@@ -89,14 +89,17 @@ body {
 .content-wrapper {
   flex: 1;
   width: 100%;
-  margin: 0;
+  max-width: 1800px;
+  margin: 0 auto;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0 0 var(--spacing-xl) 0;
+  margin: 0 auto var(--spacing-xl) auto;
+  max-width: 1800px;
+  width: 100%;
   background: white;
   padding: var(--spacing-md) var(--spacing-lg);
   border-radius: var(--radius-lg);
@@ -170,6 +173,7 @@ body {
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--border-light);
   transition: box-shadow 0.3s ease;
+  min-height: 400px;
 }
 
 .panel:hover {
@@ -603,13 +607,14 @@ textarea::placeholder {
 
 .references {
   margin-top: var(--spacing-xl);
-  margin-left: 0;
-  margin-right: 0;
+  margin-left: auto;
+  margin-right: auto;
   padding-top: var(--spacing-lg);
   border-top: 1px solid var(--border-light);
   color: var(--text-secondary);
   font-size: 0.875rem;
   width: 100%;
+  max-width: 1800px;
 }
 
 .references h3 {
