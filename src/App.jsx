@@ -157,6 +157,12 @@ function AnalysisSection({ analysisText, setAnalysisText, wordCount, handleAnaly
           placeholder="Paste student text here..."
           value={analysisText}
           onChange={(e) => setAnalysisText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+              e.preventDefault();
+              handleAnalyze();
+            }
+          }}
         />
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <span style={{ fontSize: "0.875rem", color: "var(--text-muted)" }}>
@@ -352,6 +358,12 @@ function ComparisonSection({ baselineInput, setBaselineInput, addBaselineSample,
           placeholder="Paste a past assignment here..."
           value={baselineInput}
           onChange={(e) => setBaselineInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+              e.preventDefault();
+              addBaselineSample();
+            }
+          }}
         />
         <button className="btn btn-outline btn-small" onClick={addBaselineSample} disabled={!baselineInput.trim()}>
           + Add Sample
@@ -377,6 +389,14 @@ function ComparisonSection({ baselineInput, setBaselineInput, addBaselineSample,
           placeholder="Paste the new text under review..."
           value={comparisonText}
           onChange={(e) => setComparisonText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+              e.preventDefault();
+              if (baselineSamples.length > 0 && comparisonText.trim()) {
+                runComparison();
+              }
+            }
+          }}
         />
         <button
           className="btn"
