@@ -448,6 +448,7 @@ export default function App() {
         onClose={handleDrawerClose}
         metricKey={analysisDrawerMetric}
         analysisResults={results}
+        comparisonResult={null}
       />
     </div>
   );
