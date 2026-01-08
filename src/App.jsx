@@ -344,6 +344,7 @@ export default function App() {
             vocabComparison,
             syntaxComparison,
             errorComparison,
+            metricDeviations,
             consistencyScore,
             flags
           });  }, [baselineSamples, comparisonText, buildStudentProfile, calculateMetricDeviations, calculateCompositeScore, generateStyleChangeFlags]);
