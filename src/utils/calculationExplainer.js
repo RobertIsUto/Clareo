@@ -283,23 +283,28 @@ export function prepareAnalysisMetricCalculation(metricKey, results) {
 }
 
 function prepareGradeLevelCalculation(results) {
-  const { readability, sentences } = results;
-  const avgSentenceLength = sentences.avgLength;
-  const avgSyllablesPerWord = readability.avgSyllablesPerWord;
+  const { readability, sentences, vocabulary } = results;
+  const totalWords = vocabulary.totalWords;
+  const totalSentences = sentences.length;
+  const avgSentenceLength = totalWords / totalSentences;
+
+  // Calculate syllables
+  const totalSyllables = sentences.reduce((sum, s) => sum + s.syllableCount, 0);
+  const avgSyllablesPerWord = totalSyllables / totalWords;
 
   return {
     steps: [
       {
         title: 'Calculate Average Sentence Length',
         formula: 'ASL = total words / total sentences',
-        substitution: `${sentences.totalWords} words / ${sentences.count} sentences`,
+        substitution: `${totalWords} words / ${totalSentences} sentences`,
         result: `${avgSentenceLength.toFixed(1)} words/sentence`,
         interpretation: avgSentenceLength < 15 ? 'Short sentences, easier to read.' : avgSentenceLength > 25 ? 'Long sentences, more complex.' : 'Moderate sentence length.'
       },
       {
         title: 'Calculate Average Syllables Per Word',
         formula: 'ASW = total syllables / total words',
-        substitution: `Counted syllables across ${sentences.totalWords} words`,
+        substitution: `${totalSyllables} syllables / ${totalWords} words`,
         result: `${avgSyllablesPerWord.toFixed(2)} syllables/word`,
         interpretation: avgSyllablesPerWord < 1.5 ? 'Simple vocabulary.' : avgSyllablesPerWord > 2.0 ? 'Complex vocabulary.' : 'Moderate vocabulary complexity.'
       },
@@ -307,46 +312,48 @@ function prepareGradeLevelCalculation(results) {
         title: 'Apply Flesch-Kincaid Formula',
         formula: 'Grade = 0.39×ASL + 11.8×ASW - 15.59',
         substitution: `0.39×${avgSentenceLength.toFixed(1)} + 11.8×${avgSyllablesPerWord.toFixed(2)} - 15.59`,
-        result: `Grade ${readability.grade.toFixed(1)}`,
-        interpretation: `This text is at approximately a ${Math.round(readability.grade)} grade reading level according to the Flesch-Kincaid formula.`
+        result: `Grade ${readability.grade}`,
+        interpretation: `This text is at approximately a grade ${Math.round(parseFloat(readability.grade))} reading level according to the Flesch-Kincaid formula.`
       }
     ],
     metricLabel: 'Grade Level (Flesch-Kincaid)',
-    currentValue: readability.grade.toFixed(1)
+    currentValue: readability.grade
   };
 }
 
 function prepareSentenceVarianceCalculation(results) {
-  const { sentences, variation } = results;
+  const { sentences, sentenceStats, variation } = results;
+  const mean = parseFloat(sentenceStats.mean);
+  const stdDev = parseFloat(sentenceStats.stdDev);
 
   return {
     steps: [
       {
         title: 'Calculate Mean Sentence Length',
         formula: 'μ = Σx / n',
-        substitution: `Sum of all sentence lengths / ${sentences.count} sentences`,
-        result: `μ = ${sentences.avgLength.toFixed(1)} words`,
+        substitution: `Sum of all sentence lengths / ${sentences.length} sentences`,
+        result: `μ = ${mean.toFixed(1)} words`,
         interpretation: 'Average sentence length across the text.'
       },
       {
         title: 'Calculate Standard Deviation',
         formula: 'σ = √(Σ(x - μ)² / n)',
         substitution: 'Measure of spread in sentence lengths',
-        result: `σ = ${variation.stdDev.toFixed(1)} words`,
-        interpretation: variation.stdDev < 5 ? 'Low variation - sentences are similar in length.' : variation.stdDev > 10 ? 'High variation - diverse sentence lengths.' : 'Moderate variation in sentence lengths.'
+        result: `σ = ${stdDev.toFixed(1)} words`,
+        interpretation: stdDev < 5 ? 'Low variation - sentences are similar in length.' : stdDev > 10 ? 'High variation - diverse sentence lengths.' : 'Moderate variation in sentence lengths.'
       },
       {
         title: 'Calculate Coefficient of Variation',
         formula: 'CV = (σ / μ) × 100',
-        substitution: `(${variation.stdDev.toFixed(1)} / ${sentences.avgLength.toFixed(1)}) × 100`,
-        result: `CV = ${variation.cv.toFixed(1)}%`,
+        substitution: `(${stdDev.toFixed(1)} / ${mean.toFixed(1)}) × 100`,
+        result: `CV = ${variation.cv}%`,
         interpretation: parseFloat(variation.cv) < 25
           ? 'CV < 25% suggests uniform sentence lengths, which can indicate algorithmic or templated writing.'
           : 'CV ≥ 25% indicates natural variation in sentence structure typical of human writing.'
       }
     ],
     metricLabel: 'Sentence Variance (Coefficient of Variation)',
-    currentValue: `${variation.cv.toFixed(1)}%`
+    currentValue: `${variation.cv}%`
   };
 }
 
@@ -373,7 +380,7 @@ function prepareVocabVarietyCalculation(results) {
         title: 'Calculate Mean-Segmental TTR',
         formula: 'MSTTR = (Σ segment_TTR) / n_segments',
         substitution: 'Average of all segment TTRs',
-        result: `MSTTR = ${vocabulary.sTTR.toFixed(1)}%`,
+        result: `MSTTR = ${vocabulary.sTTR}%`,
         interpretation: parseFloat(vocabulary.sTTR) < 60
           ? 'Lower variety - more repetitive vocabulary.'
           : parseFloat(vocabulary.sTTR) > 75
@@ -382,7 +389,7 @@ function prepareVocabVarietyCalculation(results) {
       }
     ],
     metricLabel: 'Vocabulary Variety (MSTTR)',
-    currentValue: `${vocabulary.sTTR.toFixed(1)}%`
+    currentValue: `${vocabulary.sTTR}%`
   };
 }
 
@@ -417,8 +424,10 @@ function prepareFormulaicCalculation(results) {
 
 function preparePredictabilityCalculation(results) {
   const { ngrams } = results;
-  const bigramRate = ngrams.bigrams.rate;
-  const trigramRate = ngrams.trigrams.rate;
+  const bigramRate = parseFloat(ngrams.bigrams.rate);
+  const trigramRate = parseFloat(ngrams.trigrams.rate);
+  const bigramExcess = Math.max(0, bigramRate - 15);
+  const trigramExcess = Math.max(0, trigramRate - 3);
 
   return {
     steps: [
@@ -432,15 +441,15 @@ function preparePredictabilityCalculation(results) {
       {
         title: 'Calculate Excess N-grams',
         formula: 'excess = max(0, rate - baseline)',
-        substitution: `Bigram excess: max(0, ${bigramRate.toFixed(1)} - 15) = ${Math.max(0, bigramRate - 15).toFixed(1)}; Trigram excess: max(0, ${trigramRate.toFixed(1)} - 3) = ${Math.max(0, trigramRate - 3).toFixed(1)}`,
-        result: `Bigram: ${Math.max(0, bigramRate - 15).toFixed(1)}%, Trigram: ${Math.max(0, trigramRate - 3).toFixed(1)}%`,
+        substitution: `Bigram excess: max(0, ${bigramRate.toFixed(1)} - 15) = ${bigramExcess.toFixed(1)}; Trigram excess: max(0, ${trigramRate.toFixed(1)} - 3) = ${trigramExcess.toFixed(1)}`,
+        result: `Bigram: ${bigramExcess.toFixed(1)}%, Trigram: ${trigramExcess.toFixed(1)}%`,
         interpretation: 'Excess measures how much this text exceeds typical human writing patterns.'
       },
       {
         title: 'Calculate Predictability Score',
         formula: 'score = min(100, excess_bigram×2 + excess_trigram×5)',
-        substitution: `min(100, ${Math.max(0, bigramRate - 15).toFixed(1)}×2 + ${Math.max(0, trigramRate - 3).toFixed(1)}×5)`,
-        result: `${ngrams.predictabilityScore.toFixed(1)}%`,
+        substitution: `min(100, ${bigramExcess.toFixed(1)}×2 + ${trigramExcess.toFixed(1)}×5)`,
+        result: `${ngrams.predictabilityScore}%`,
         interpretation: parseFloat(ngrams.predictabilityScore) < 20
           ? 'Low predictability - natural, varied language.'
           : parseFloat(ngrams.predictabilityScore) > 30
@@ -449,6 +458,6 @@ function preparePredictabilityCalculation(results) {
       }
     ],
     metricLabel: 'Predictability Score',
-    currentValue: `${ngrams.predictabilityScore.toFixed(1)}%`
+    currentValue: `${ngrams.predictabilityScore}%`
   };
 }
