@@ -66,7 +66,7 @@ export const COMMON_ERROR_PATTERNS = [
   },
   {
     id: 'their-there',
-    pattern: /\b(their|there|they\'re)\b/gi,
+    pattern: /\b(their|there|they're)\b/gi,
     type: 'commonly-confused',
     severity: 1,
     description: 'Their/there/they\'re usage'
@@ -87,7 +87,7 @@ export const COMMON_ERROR_PATTERNS = [
   },
   {
     id: 'double-negative',
-    pattern: /\b(don\'t|doesn\'t|didn\'t|won\'t|can\'t|couldn\'t|shouldn\'t|wouldn\'t)\s+\w*\s+(no|nothing|nobody|nowhere|never|none)\b/gi,
+    pattern: /\b(don't|doesn't|didn't|won't|can't|couldn't|shouldn't|wouldn't)\s+\w*\s+(no|nothing|nobody|nowhere|never|none)\b/gi,
     type: 'double-negative',
     severity: 2,
     description: 'Double negative construction'
@@ -141,7 +141,7 @@ export const SPELLING_VARIANTS = {
  */
 export const STYLE_PATTERNS = {
   contractions: {
-    pattern: /\b(don\'t|doesn\'t|didn\'t|isn\'t|aren\'t|wasn\'t|weren\'t|haven\'t|hasn\'t|hadn\'t|can\'t|couldn\'t|shouldn\'t|wouldn\'t|won\'t|it\'s|that\'s|what\'s|who\'s|where\'s|when\'s|how\'s|I\'m|you\'re|we\'re|they\'re|I\'ve|you\'ve|we\'ve|they\'ve|I\'ll|you\'ll|we\'ll|they\'ll|he\'s|she\'s)\b/gi,
+    pattern: /\b(don't|doesn't|didn't|isn't|aren't|wasn't|weren't|haven't|hasn't|hadn't|can't|couldn't|shouldn't|wouldn't|won't|it's|that's|what's|who's|where's|when's|how's|I'm|you're|we're|they're|I've|you've|we've|they've|I'll|you'll|we'll|they'll|he's|she's)\b/gi,
     type: 'contraction',
     severity: 0,
     description: 'Contraction usage'

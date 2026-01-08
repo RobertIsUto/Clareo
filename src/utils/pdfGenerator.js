@@ -420,6 +420,59 @@ export const generateMethodologyPDF = () => {
         • N-gram analysis: Based on computational linguistics research on language patterns and predictability.
       </div>
 
+      <h2 id="composite">8. Composite Consistency Score</h2>
+
+      <p>The Composite Consistency Score represents the overall alignment between the current text and the student's established baseline. It is calculated as a weighted sum of four components, minus specific penalties.</p>
+
+      <div class="formula-box">
+        <div class="formula">Score = (M × 0.40) + (V × 0.10) + (S × 0.30) + (E × 0.15) - Penalties</div>
+        <div class="variables">
+          <div class="variable-item"><strong>M</strong> = Metric Deviation Score (based on RMS Z-Score)</div>
+          <div class="variable-item"><strong>V</strong> = Vocabulary Overlap Score</div>
+          <div class="variable-item"><strong>S</strong> = Syntactic Pattern Score</div>
+          <div class="variable-item"><strong>E</strong> = Error Consistency Score</div>
+        </div>
+      </div>
+
+      <h3>8.1 Metric Deviation Score (40% Weight)</h3>
+      <div class="formula-box">
+        <div class="formula">M = 100 / (1 + (RMS / 2)²)</div>
+        <div class="variables">
+          <div class="variable-item"><strong>RMS</strong> = Root Mean Square of Z-scores for all tracked metrics</div>
+          <div class="variable-item"><strong>Logic:</strong> A statistical decay function. Z=0 gives 100pts; Z=2 gives 50pts.</div>
+        </div>
+      </div>
+
+      <h3>8.2 Vocabulary Overlap Score (10% Weight)</h3>
+      <div class="formula-box">
+        <div class="formula">V = Symmetric Vocabulary Overlap %</div>
+        <div class="variables">
+          <div class="variable-item">Measures the percentage of content words shared between the current text and the baseline corpus.</div>
+        </div>
+      </div>
+
+      <h3>8.3 Syntactic Pattern Score (30% Weight)</h3>
+      <div class="formula-box">
+        <div class="formula">S = 100 / (1 + (Deviation / 2)²)</div>
+        <div class="variables">
+          <div class="variable-item"><strong>Deviation</strong> = Aggregate deviation in clause density, sentence complexity, and opening structures.</div>
+        </div>
+      </div>
+
+      <h3>8.4 Error Consistency Score (15% Weight)</h3>
+      <div class="formula-box">
+        <div class="formula">E = 100 - |Error Rate Change| × Factor</div>
+        <div class="variables">
+          <div class="variable-item"><strong>Factor:</strong> 0.8 for typical variation; 1.5 if text is suspiciously cleaner than baseline.</div>
+        </div>
+      </div>
+
+      <h3>8.5 Penalties</h3>
+      <div class="example">
+        <strong>Suspiciously Clean:</strong> -10 points (if error rate drops significantly below baseline)<br>
+        <strong>Significant Deviations:</strong> -5 points per metric with Z-score > 2.0 (capped at -20 points)
+      </div>
+
       <h2>Implementation Notes</h2>
 
       <table>

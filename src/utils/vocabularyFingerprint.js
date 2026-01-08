@@ -52,7 +52,6 @@ export function extractVocabularyProfile(text) {
 
   const avgWordLength = totalLength / totalWords;
 
-  const uniqueContentWords = new Set(contentWords);
   const lexicalDensity = contentWords.length / totalWords;
 
   const signatureWords = calculateSignatureWords(wordFrequency, totalWords);

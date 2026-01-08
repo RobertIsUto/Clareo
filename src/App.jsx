@@ -234,7 +234,7 @@ export default function App() {
   /**
    * Generate style change flags based on analysis
    */
-  const generateStyleChangeFlags = useCallback((metricDeviations, vocabComparison, syntaxComparison, errorComparison, reliability) => {
+  const generateStyleChangeFlags = useCallback((metricDeviations, vocabComparison, syntaxComparison, errorComparison) => {
     const flags = [];
 
     if (errorComparison.suspiciouslyClean) {
@@ -338,17 +338,15 @@ export default function App() {
       profile.reliability
     );
 
-    setComparisonResult({
-      profile,
-      current,
-      metricDeviations,
-      vocabComparison,
-      syntaxComparison,
-      errorComparison,
-      consistencyScore,
-      flags
-    });
-  }, [baselineSamples, comparisonText, buildStudentProfile, calculateMetricDeviations, calculateCompositeScore, generateStyleChangeFlags]);
+          setComparisonResult({
+            profile,
+            current,
+            vocabComparison,
+            syntaxComparison,
+            errorComparison,
+            consistencyScore,
+            flags
+          });  }, [baselineSamples, comparisonText, buildStudentProfile, calculateMetricDeviations, calculateCompositeScore, generateStyleChangeFlags]);
 
   /**
    * Click handlers for calculation drawer
@@ -799,7 +797,7 @@ function ComparisonSection({ baselineInput, setBaselineInput, assignmentType, se
 }
 
 function ComparisonResults({ comparisonResult, baselineSamples, onCompositeClick, onMetricClick }) {
-  const { consistencyScore, flags, metricDeviations, profile } = comparisonResult;
+  const { consistencyScore, flags } = comparisonResult;
 
   const getScoreColor = (score) => {
     if (score >= STATISTICAL_THRESHOLDS.CONSISTENCY_SCORE_RANGES.EXCELLENT) return 'var(--success)';

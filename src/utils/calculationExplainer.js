@@ -66,13 +66,12 @@ export function prepareMetricCalculation(metricKey, comparisonResult, baselineSa
  * Prepare calculation breakdown for composite consistency score
  */
 export function prepareCompositeCalculation(comparisonResult) {
-  const { metricDeviations, vocabComparison, syntaxComparison, errorComparison, consistencyScore } = comparisonResult;
+  const { metricDeviations, vocabComparison, syntaxComparison, errorComparison } = comparisonResult;
 
   const steps = [];
 
   // Step 1: Calculate RMS Z-Score
   const zScores = metricDeviations.map(d => d.zScore);
-  const zScoresStr = zScores.map(z => z.toFixed(2)).join(', ');
   const sumSquares = zScores.reduce((sum, z) => sum + z * z, 0);
   const rmsZScore = Math.sqrt(sumSquares / zScores.length);
 
@@ -264,8 +263,6 @@ function interpretCompositeScore(score) {
  */
 export function prepareAnalysisMetricCalculation(metricKey, results) {
   if (!results) return null;
-
-  const steps = [];
 
   switch (metricKey) {
     case 'gradeLevel':

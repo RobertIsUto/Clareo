@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { FORMAL_REGISTER_PHRASES, CONNECTIVES, FORMULAIC_NGRAMS } from '../constants/phrases.js';
-import { createSmartRegex } from '../utils/textHelpers.js';
 
 export const TextHighlighter = ({ text, mode }) => {
   const highlightedText = useMemo(() => {

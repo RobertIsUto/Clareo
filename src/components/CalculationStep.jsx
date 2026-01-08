@@ -1,9 +1,7 @@
-import { useMemo } from 'react';
+import React from 'react';
 
-/**
- * Displays a single calculation step with formula, substitution, result, and interpretation
- */
-export default function CalculationStep({ stepNumber, title, formula, substitution, result, interpretation, highlight = false }) {
+export default function CalculationStep({
+  stepNumber, title, formula, substitution, result, interpretation, highlight = false }) {
   return (
     <div className={`calc-step ${highlight ? 'calc-step-highlight' : ''}`}>
       <div className="calc-step-header">
