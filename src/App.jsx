@@ -46,7 +46,7 @@ export default function App() {
             onClick={toggleTheme}
             aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
           >
-            {theme === 'light' ? '\u{1F319}' : '\u{2600}\u{FE0F}'}
+            {theme === 'light' ? 'Dark' : 'Light'}
           </button>
         </nav>
       </header>
@@ -349,15 +349,7 @@ function ComparisonSection({ baselineInput, setBaselineInput, assignmentType, se
           <select
             value={assignmentType}
             onChange={(e) => setAssignmentType(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "0.5rem",
-              borderRadius: "6px",
-              border: "1px solid var(--border-medium)",
-              fontSize: "0.875rem",
-              backgroundColor: "white",
-              color: "var(--text-primary)"
-            }}
+            className="assignment-select"
           >
             <option value="essay">Essay</option>
             <option value="creative">Creative Writing</option>
